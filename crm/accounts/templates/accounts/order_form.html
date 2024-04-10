@@ -6,8 +6,8 @@
 <form action="" method="POST">
     {% csrf_token %}
     {{ formset.management_form }}
-    {% for form in form %}
-        {{form}}
+    {% for a in form %}
+       {{a}}
         <hr>
     {% endfor %}
     <button>Submit</button>

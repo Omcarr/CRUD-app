@@ -17,9 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
+#imports for configuring direct access of static images on web path
+from django.conf.urls.static import static
+from django.conf import settings
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('accounts.urls'))
 ]
+
+#lets us access anything in static images folder to be directly seen on the website 
+#example-> 127....../images/filename.jpeg will now be directly visiabel at this pattern
+urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

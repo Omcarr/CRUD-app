@@ -36,14 +36,15 @@ def register(request):
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-            #grabs the new user and makes it a member of customer group
-            group = Group.objects.get(name='customer')
-            user.groups.add(group)
-            #this makesthe user a customer object with all inital vals for internal parameters
-            Customer.objects.create(
-                user=user,
-                name=user.username,
-            )
+            #done the same thing using signals
+            # #grabs the new user and makes it a member of customer group
+            # group = Group.objects.get(name='customer')
+            # user.groups.add(group)
+            # #this makes the user a customer object with all inital vals for internal parameters
+            # Customer.objects.create(
+            #     user=user,
+            #     name=user.username,
+            # )
 
             messages.success(request, 'Account was created for ' + username)
 
@@ -191,3 +192,18 @@ def userProfile(request):
 
     context = {'orders':orders, 'order_count':total_orders,'delivered':delivered,'pending':pending}
     return render(request, 'accounts/user.html', context)
+
+@login_required(login_url='login')
+@allowed_user(['customer','admin'])
+def accounts_settings(request):
+    customer=request.user.customer #return the current logged in customer
+    form=CustomerForm(instance=customer)
+    if request.method=='POST':
+        form=CustomerForm(request.POST,request.FILES,instance=customer)
+        if form.is_valid():
+            form.save()
+            return redirect('account')
+
+    context={'form':form}
+    return render(request,'accounts/accounts_settings.html',context)
+
